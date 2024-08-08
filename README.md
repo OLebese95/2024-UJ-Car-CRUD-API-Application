@@ -1,3 +1,4 @@
+[![Node.js CI](https://github.com/OLebese95/2024-UJ-Car-CRUD-API-Application/actions/workflows/node.js.yml/badge.svg)](https://github.com/OLebese95/2024-UJ-Car-CRUD-API-Application/actions/workflows/node.js.yml)
 # 2024-UJ-Car-CRUD-API-Application
 
 ## Overview
