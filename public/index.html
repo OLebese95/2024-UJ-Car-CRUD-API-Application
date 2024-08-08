@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cars CRUD App</title>
+  <script src="alpineData.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    button {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+    .hidden {
+      display: none;
+    }
+
+    [x-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" x-data="carCRUD" x-cloak>
+    <h1 x-text="title"></h1>
+    <div>
+      <h2>Get the list of Cars</h2>
+      <button x-on:click="toggleList">Show Cars</button>
+      <div x-show="showList">
+        <table>
+          <thead>
+            <tr>
+              <th>Make</th>
+              <th>Model</th>
+              <th>Color</th>
+              <th>Registration Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="car in cars">
+              <tr>
+                <td x-text="car.make"></td>
+                <td x-text="car.model"></td>
+                <td x-text="car.color"></td>
+                <td x-text="car.reg_number"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+
+      
+      <h2>Filter the list for a specific town</h2>
+      <select x-model="town">
+        <option value="Paarl">Paarl</option>
+        <option value="Bellville">Bellville</option>
+        <option value="Stellenbosch">Stellenbosch</option>
+        <option value="Malmesbury">Malmesbury</option>
+        <option value="Cape Town">Cape Town</option>
+        <option value="Kuilsriver">Kuilsriver</option>
+      </select>
+     
+      <button x-on:click="filterCars">Filter</button>
+      <table>
+        <thead x-show="showFilteredHeader">
+          <tr>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Color</th>
+            <th>Registration Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="car in filteredCars" :key="car.reg_number">
+            <tr>
+              <td x-text="car.make"></td>
+              <td x-text="car.model"></td>
+              <td x-text="car.color"></td>
+              <td x-text="car.reg_number"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2>Add new car to the list</h2>
+      <form x-on:submit.prevent="addCar">
+    
+        <table>
+          <tr>
+            <td><label for="make">Make:</label></td>
+            <td><input type="text" id="make" x-model="newCar.make" required></td>
+          </tr>
+          <tr>
+            <td><label for="model">Model:</label></td>
+            <td><input type="text" id="model" x-model="newCar.model" required></td>
+          </tr>
+          <tr>
+            <td><label for="color">Color:</label></td>
+            <td><input type="text" id="color" x-model="newCar.color" required></td>
+          </tr>
+          <tr>
+            <td><label for="reg_number">Registration Number:</label></td>
+            <td><input type="text" id="reg_number" x-model="newCar.reg_number" required></td>
+          </tr>
+        </table>
+        <br>
+        <div>
+        <button type="submit">Add</button>
+        </div>
+      </form>
+    </div>
+
+    <div>
+      <h2>Update Car Details</h2>
+      <form x-on:submit.prevent="submitUpdateCar">
+        <table>
+          <tr>
+            <td><label for="update_make">Make:</label></td>
+            <td><input type="text" id="update_make" x-model="updateCar.make" required></td>
+          </tr>
+          <tr>
+            <td><label for="update_model">Model:</label></td>
+            <td><input type="text" id="update_model" x-model="updateCar.model" required></td>
+          </tr>
+          <tr>
+            <td><label for="update_color">Color:</label></td>
+            <td><input type="text" id="update_color" x-model="updateCar.color" required></td>
+          </tr>
+          <tr>
+            <td><label for="update_reg_number">Registration Number:</label></td>
+            <td><input type="text" id="update_reg_number" x-model="updateCar.reg_number" required></td>
+          </tr>
+        </table>
+        <br>
+        <div>
+        <button type="submit">Update</button>
+        </div>
+      </form>
+    </div>
+
+    <div>
+      <h2>Delete Car</h2>
+      <form x-on:submit.prevent="deleteCar">
+        <table>
+          <tr>
+            <td><label for="delete_car">Select Car:</label></td>
+            <td>
+              <select id="delete_car" x-model="selectedCar" required>
+                <option value="">Select Car</option>
+                <template x-for="car in cars" :key="car.reg_number">
+                  <option :value="JSON.stringify(car)" x-text="car.reg_number"></option>
+                </template>
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <div>
+        <button type="submit">Delete</button>
+        </div>
+      </form>
+      
+      
+    </div>
+  </div>
+
+</body>
+
+</html>
