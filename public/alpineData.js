@@ -19,13 +19,13 @@ document.addEventListener("alpine:init", () => {
     selectedCar: null, 
 
     carList() {
-      axios.get(`http://localhost:3000/api/carList/`)
+      axios.get(`/api/carList/`)
         .then((response) => {
           this.cars = response.data.list; 
         })
     },
     filterCars() {
-      axios.get(`http://localhost:3000/api/carListTown/${this.town}`)
+      axios.get(`/api/carListTown/${this.town}`)
         .then((response) => {
           this.filteredCars = response.data.list;
           this.showFilteredHeader = this.filteredCars.length > 0; 
@@ -43,7 +43,7 @@ document.addEventListener("alpine:init", () => {
     
 
     addCar() {
-      axios.post(`http://localhost:3000/api/carList/newInfo`, this.newCar)
+      axios.post(`/api/carList/newInfo`, this.newCar)
         .then((response) => {
           if (response.data.status === "Success") {
             alert(response.data.message);
@@ -56,7 +56,7 @@ document.addEventListener("alpine:init", () => {
         });
     },
     submitUpdateCar() {
-      axios.put(`http://localhost:3000/api/carList/updateInfo`, {
+      axios.put(`/api/carList/updateInfo`, {
         color: this.updateCar.color,
         make: this.updateCar.make,
         model: this.updateCar.model,
@@ -82,7 +82,7 @@ document.addEventListener("alpine:init", () => {
       if (this.selectedCar) {
         const car = JSON.parse(this.selectedCar);
         
-        axios.delete('http://localhost:3000/api/carList/deleteInfo', {
+        axios.delete('/api/carList/deleteInfo', {
           data: {
             color: car.color,
             make: car.make,
