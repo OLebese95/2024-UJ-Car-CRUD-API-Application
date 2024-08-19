@@ -3,7 +3,7 @@ document.addEventListener("alpine:init", () => {
     title: 'Cars CRUD APP',
     cars: [],
     filteredCars: [],
-    showList: true, 
+    showList: false, 
     town: 'Paarl',
     newCar: {
       make: '',
